@@ -81,26 +81,31 @@ async function banearUsuario(targetDiscord, razon) {
         return;
     }
 
-    // Buscar el usuario a banear
-    const q = await db.collection("usuarios")
-        .where("discord", "==", targetDiscord)
-        .get();
+    try {
+        // Buscar el usuario a banear
+        const q = await db.collection("usuarios")
+            .where("discord", "==", targetDiscord)
+            .get();
 
-    if (q.empty) {
-        alert("Usuario no encontrado: " + targetDiscord);
-        return;
+        if (q.empty) {
+            alert("Usuario no encontrado: " + targetDiscord);
+            return;
+        }
+
+        const docId = q.docs[0].id;
+
+        // Actualizar estado de baneo
+        await db.collection("usuarios").doc(docId).update({
+            baneado: true
+        });
+
+        const logMsg = `Usuario BANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
+        enviarLog(logMsg);
+        alert("Usuario " + targetDiscord + " ha sido baneado");
+    } catch (error) {
+        console.error("Error al banear:", error);
+        alert("Error al ejecutar el comando");
     }
-
-    const docId = q.docs[0].id;
-
-    // Actualizar estado de baneo
-    await db.collection("usuarios").doc(docId).update({
-        baneado: true
-    });
-
-    const logMsg = `Usuario BANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
-    enviarLog(logMsg);
-    alert("Usuario " + targetDiscord + " ha sido baneado");
 }
 
 // 🔓 COMANDO !UNBAN
@@ -123,33 +128,41 @@ async function desbanearUsuario(targetDiscord, razon) {
         return;
     }
 
-    // Buscar el usuario a desbanear
-    const q = await db.collection("usuarios")
-        .where("discord", "==", targetDiscord)
-        .get();
+    try {
+        // Buscar el usuario a desbanear
+        const q = await db.collection("usuarios")
+            .where("discord", "==", targetDiscord)
+            .get();
 
-    if (q.empty) {
-        alert("Usuario no encontrado: " + targetDiscord);
-        return;
+        if (q.empty) {
+            alert("Usuario no encontrado: " + targetDiscord);
+            return;
+        }
+
+        const docId = q.docs[0].id;
+
+        // Actualizar estado de baneo
+        await db.collection("usuarios").doc(docId).update({
+            baneado: false
+        });
+
+        const logMsg = `Usuario DESBANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
+        enviarLog(logMsg);
+        alert("Usuario " + targetDiscord + " ha sido desbaneado");
+    } catch (error) {
+        console.error("Error al desbanear:", error);
+        alert("Error al ejecutar el comando");
     }
-
-    const docId = q.docs[0].id;
-
-    // Actualizar estado de baneo
-    await db.collection("usuarios").doc(docId).update({
-        baneado: false
-    });
-
-    const logMsg = `Usuario DESBANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
-    enviarLog(logMsg);
-    alert("Usuario " + targetDiscord + " ha sido desbaneado");
 }
 
 // 💬 PROCESAR COMANDOS DE CHAT
 async function procesarComando(mensaje) {
     mensaje = mensaje.trim();
     
-    if (!mensaje.startsWith("!")) return;
+    if (!mensaje.startsWith("!")) {
+        alert("Los comandos deben empezar con !");
+        return;
+    }
 
     const partes = mensaje.split(" ");
     const comando = partes[0].toLowerCase();
@@ -163,6 +176,9 @@ async function procesarComando(mensaje) {
         const targetUser = partes[1];
         const razon = partes.slice(2).join(" ");
         await desbanearUsuario(targetUser, razon);
+    }
+    else {
+        alert("Comando no reconocido. Comandos disponibles: !ban, !unban");
     }
 }
 
@@ -215,7 +231,7 @@ async function login() {
 
 async function register() {
     if (localStorage.discord) {
-        mostrarPestania("desavilitado");
+        mostrarPestania("inicio");
         return;
     }
 

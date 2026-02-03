@@ -7,9 +7,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<script defer src="script.js"></script>
-<script defer src="script2.js"></script>
-
 <style>
 body {
     margin: 0;
@@ -172,8 +169,26 @@ footer input {
 </div>
 
 <footer>
-<input id="commandInput" placeholder="commands..." onkeydown="detectarComando(event)">
+<input id="commandInput" placeholder="Escribe un comando (!ban, !unban)..." onkeydown="detectarComando(event)">
 </footer>
+
+<script>
+// Función para detectar cuando se presiona Enter en el input de comandos
+function detectarComando(event) {
+    if (event.key === "Enter") {
+        const input = document.getElementById("commandInput");
+        const comando = input.value.trim();
+        
+        if (comando) {
+            procesarComando(comando);
+            input.value = ""; // Limpiar el input
+        }
+    }
+}
+</script>
+
+<script defer src="script.js"></script>
+<script defer src="script2.js"></script>
 
 </body>
 </html>
