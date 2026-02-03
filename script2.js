@@ -3,12 +3,12 @@
 ========================= */
 
 const firebaseConfig = {
-    apiKey: "API_KEY_AQUI",
-    authDomain: "PROJECT_ID.firebaseapp.com",
-    projectId: "PROJECT_ID",
-    storageBucket: "PROJECT_ID.appspot.com",
-    messagingSenderId: "SENDER_ID",
-    appId: "APP_ID"
+    apiKey: "AIzaSyC0Jimi-JuSIF6R18xEB26gHmK2QhIHCKk",
+    authDomain: "armadosstudios.firebaseapp.com",
+    projectId: "armadosstudios",
+    storageBucket: "armadosstudios.firebasestorage.app",
+    messagingSenderId: "750018454804",
+    appId: "1:750018454804:web:abcdef123456"
 };
 
 firebase.initializeApp(firebaseConfig);
