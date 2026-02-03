@@ -3,177 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <title>Armados Studios</title>
-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+<link rel="icon" type="image/png" href="logo.png">
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f1115;
-    color: #eaeaea;
-}
-
-.pestana {
-    display: none;
-    max-width: 1100px;
-    margin: auto;
-    padding: 30px;
-    border-radius: 16px;
-    background: #161a22;
-    margin-top: 40px;
-}
-
-h1 { text-align: center; }
-h2, h3 { margin-top: 0; }
-
-.recuadro {
-    background: #1e2330;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-input, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 8px;
-    border: none;
-}
-
-button {
-    background: #2f6fed;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover { opacity: 0.9; }
-
-hr {
-    border: none;
-    height: 1px;
-    background: #333;
-    margin: 20px 0;
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #0b0d12;
-    padding: 8px;
-}
-
-footer input {
-    background: #161a22;
-    color: white;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f1115;
+        color: #eaeaea;
+    }
+    .pestana {
+        display: none;
+        max-width: 1100px;
+        margin: auto;
+        padding: 30px;
+        border-radius: 16px;
+        background: #161a22;
+        margin-top: 40px;
+    }
+    h1 { text-align: center; }
+    h2, h3 { margin-top: 0; }
+    .recuadro {
+        background: #1e2330;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 8px;
+        border: none;
+    }
+    button {
+        background: #2f6fed;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+    hr {
+        border: none;
+        height: 1px;
+        background: #333;
+        margin: 20px 0;
+    }
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #0b0d12;
+        padding: 8px;
+    }
+    footer input {
+        background: #161a22;
+        color: white;
+    }
 </style>
 </head>
-
 <body onload="mostrarPestania('login'); autologin();">
-
-<div id="overlayLogin" style="
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.6);
-    z-index:9999;
-    align-items:center;
-    justify-content:center;
-">
-    <div style="
-        background:#1e2330;
-        padding:30px;
-        border-radius:14px;
-        font-size:18px;
+    <div id="overlayLogin" style="
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.6);
+        z-index:9999;
+        align-items:center;
+        justify-content:center;
     ">
-        Intentando loguear...
+        <div style="
+            background:#1e2330;
+            padding:30px;
+            border-radius:14px;
+            font-size:18px;
+        ">
+            Intentando loguear...
+        </div>
     </div>
-</div>
-
-
-<!-- LOGIN -->
-<div class="pestana" id="login">
-<h1>Login</h1>
-<div class="recuadro">
-<label>Ingrese su nombre de Discord:</label>
-<input id="loginDiscord">
-
-<label>Ingrese su contraseña de la web:</label>
-<input id="loginPass" type="password">
-
-<button onclick="login()">Mandar la Solicitud</button>
-
-<hr>
-
-<p>¿No tienes una cuenta en la web?</p>
-<button onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
-</div>
-</div>
-
-<!-- REGISTER -->
-<div class="pestana" id="register">
-<h1>Registrarme</h1>
-<div class="recuadro">
-<label>Discord:</label>
-<input id="regDiscord">
-
-<label>Roblox:</label>
-<input id="regRoblox">
-
-<label>Contraseña:</label>
-<input id="regPass" type="password">
-
-<button onclick="register()">Mandar la Solicitud</button>
-
-<hr>
-
-<p>¿Ya tienes una cuenta?</p>
-<button onclick="mostrarPestania('login')">Ir a login</button>
-</div>
-</div>
-
-<!-- INICIO -->
-<div class="pestana" id="inicio">
-<h1>Bienvenido a Armados Studios</h1>
-<h3>Te agradecemos en haber confiado en nosotros...</h3>
-
-<div class="recuadro">
-<h2>¿Qué vas a poder encontrar aquí?</h2>
-
-<p>Modelos liberados de Roblox/Blender</p>
-<button onclick="mostrarPestania('liberados')">Ver modelos liberados</button>
-
-<hr>
-
-<p>Modelos en venta</p>
-<button onclick="mostrarPestania('marcketplace')">Ver marketplace</button>
-
-<hr>
-
-<p>Usuarios sancionados</p>
-<button onclick="mostrarPestania('sancionados')">Ver sancionados</button>
-</div>
-</div>
-
-<!-- DESHABILITADO -->
-<div class="pestana" id="desavilitado">
-<h1 style="color:red">Estas desavilitado!!!</h1>
-<p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
-</div>
-
-<footer>
-<input id="commandInput" placeholder="Escribe un comando (!ban, !unban, !verificar)..." onkeydown="if(event.key==='Enter'){procesarComando(this.value); this.value='';}">
-</footer>
-
-<script defer src="script.js"></script>
-<script defer src="script2.js"></script>
-
+    <div class="pestana" id="login">
+        <h1>Login</h1>
+        <div class="recuadro">
+            <label>Ingrese su nombre de Discord:</label>
+            <input id="loginDiscord">
+            <label>Ingrese su contraseña de la web:</label>
+            <input id="loginPass" type="password">
+            <button onclick="login()">Mandar la Solicitud</button>
+            <hr>
+            <p>¿No tienes una cuenta en la web?</p>
+            <button onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
+        </div>
+    </div>
+    <div class="pestana" id="register">
+        <h1>Registrarme</h1>
+        <div class="recuadro">
+            <label>Discord:</label>
+            <input id="regDiscord">
+            <label>Roblox:</label>
+            <input id="regRoblox">
+            <label>Contraseña:</label>
+            <input id="regPass" type="password">
+            <button onclick="register()">Mandar la Solicitud</button>
+            <hr>
+            <p>¿Ya tienes una cuenta?</p>
+            <button onclick="mostrarPestania('login')">Ir a login</button>
+        </div>
+    </div>  
+    <div class="pestana" id="inicio">
+        <h1>Bienvenido a Armados Studios</h1>
+        <h3>Te agradecemos en haber confiado en nosotros...</h3>
+        <div class="recuadro">
+            <h2>¿Qué vas a poder encontrar aquí?</h2>
+            <p>Modelos liberados de Roblox/Blender</p>
+            <button onclick="mostrarPestania('liberados')">Ver modelos liberados</button>
+            <hr>
+            <p>Modelos en venta</p>
+            <button onclick="mostrarPestania('marcketplace')">Ver marketplace</button>
+            <hr>
+            <p>Usuarios sancionados</p>
+            <button onclick="mostrarPestania('sancionados')">Ver sancionados</button>
+        </div>
+    </div>
+    <div class="pestana" id="desavilitado">
+        <h1 style="color:red">Estas desavilitado!!!</h1>
+        <p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
+    </div>
+    <div class="pestana" id="liberados">
+        <h1>Bienvenido a los Modelos Liberados por Armados Studios y su comunidad</h1>
+        <div class="recuadro">
+            <div class="recuadro">
+                <h2>Modelo de Prueba</h2>
+                <p>Dueño: @abelcraft_ok664</p>
+                <p>Este es un modelo de prueba</p>
+                <button>Descargar</button>
+            </div>
+        </div>
+    </div>
+    <div class="pestana" id="marcketplace">
+        <h1>Bienvenido a los Modelos en venta de Armados Studios y su comunidad</h1>
+        <div class="recuadro">
+            <div class="recuadro">
+                <h2>Modelo de Prueba</h2>
+                <p>Dueño: @abelcraft_ok664</p>
+                <p>Este es un modelo de prueba</p>
+                <p>Precio: <p style="color:lime;">Gratis</p></p>
+                <button>Contactar</button>
+            </div>
+        </div>
+    </div>
+    <div class="pestana" id="sancionados">
+        <h1>Bienvenido a los sancionados en Armados Studios</h1>
+        <div class="recuadro">
+            <div class="recuadro">
+                <h2>Usuario de Prueba</h2>
+                <p>Usuario: @abelcraft_ok664</p>
+                <p>Razon: Este es esquema de prueba</p>
+                <img src="logo1.png" style="width:100px;">
+            </div>
+        </div>
+    </div>
+    <footer>
+        <input id="commandInput" placeholder="Escribe un comando (!ban, !unban, !verificar)..." onkeydown="if(event.key==='Enter'){procesarComando(this.value); this.value='';}">
+        <hr>
+        <h2>¿Queres publicar tus modelos liberados o vender alguno tuyo?</h2>
+        <p>Para hacer eso, haz click en el siguiente boton:</p>
+        <button onclick="window.location.href='https://discord.com/channels/1444062713180586148/1468363331822948639'">Ir al sistema de Tickets de Armados Studios</button>
+    </footer>
+    <script defer src="script.js"></script>
+    <script defer src="script2.js"></script>
 </body>
 </html>
