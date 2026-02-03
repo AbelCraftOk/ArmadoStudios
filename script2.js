@@ -42,19 +42,88 @@ async function enviarLog(accion) {
     });
 }
 
-// ✅ VERIFICAR SI EL USUARIO ES ADMINISTRADOR
-async function esAdmin(discordUser) {
-    if (!discordUser) return false;
+// 🔍 FUNCIÓN DE DEBUG PARA VERIFICAR PERMISOS
+async function verificarMisPermisos() {
+    console.log("=== VERIFICANDO PERMISOS ===");
+    console.log("Usuario en localStorage:", localStorage.discord);
+    
+    if (!localStorage.discord) {
+        console.log("❌ No hay usuario en localStorage");
+        alert("No hay sesión iniciada");
+        return;
+    }
     
     try {
+        // Intentar obtener el documento
+        const adminDoc = await db.collection("admins")
+            .doc(localStorage.discord)
+            .get();
+        
+        console.log("Documento existe:", adminDoc.exists);
+        
+        if (adminDoc.exists) {
+            const data = adminDoc.data();
+            console.log("Datos del documento:", data);
+            console.log("Perms:", data.perms);
+            console.log("Tipo de perms:", typeof data.perms);
+            console.log("Es admin:", data.perms === true);
+            
+            alert("Eres admin: " + (data.perms === true ? "SÍ" : "NO"));
+        } else {
+            console.log("❌ El documento no existe en la colección admins");
+            
+            // Listar todos los documentos de admins
+            const todosAdmins = await db.collection("admins").get();
+            console.log("Total de documentos en admins:", todosAdmins.size);
+            todosAdmins.forEach(doc => {
+                console.log("ID del documento:", doc.id);
+                console.log("Datos:", doc.data());
+            });
+            
+            alert("No estás en la lista de admins. Revisa la consola (F12)");
+        }
+    } catch (error) {
+        console.error("Error al verificar permisos:", error);
+        alert("Error al verificar permisos: " + error.message);
+    }
+}
+
+// ✅ VERIFICAR SI EL USUARIO ES ADMINISTRADOR (VERSIÓN MEJORADA)
+async function esAdmin(discordUser) {
+    if (!discordUser) {
+        console.log("esAdmin: No se proporcionó usuario");
+        return false;
+    }
+    
+    try {
+        console.log("Verificando admin para:", discordUser);
+        
+        // Método 1: Buscar por ID del documento
         const adminDoc = await db.collection("admins")
             .doc(discordUser)
             .get();
         
-        if (!adminDoc.exists) return false;
+        if (adminDoc.exists) {
+            const data = adminDoc.data();
+            console.log("Encontrado por ID. Datos:", data);
+            return data.perms === true;
+        }
         
-        const data = adminDoc.data();
-        return data.perms === true;
+        // Método 2: Buscar por campo "admin" (por si está guardado diferente)
+        console.log("No encontrado por ID, buscando por campo...");
+        const querySnapshot = await db.collection("admins")
+            .where("admin", "==", discordUser)
+            .get();
+        
+        if (!querySnapshot.empty) {
+            const data = querySnapshot.docs[0].data();
+            console.log("Encontrado por query. Datos:", data);
+            return data.perms === true;
+        }
+        
+        console.log("No se encontró como admin");
+        return false;
+        
     } catch (error) {
         console.error("Error verificando admin:", error);
         return false;
@@ -71,7 +140,7 @@ async function banearUsuario(targetDiscord, razon) {
     // Verificar que el usuario actual sea admin
     const isAdmin = await esAdmin(localStorage.discord);
     if (!isAdmin) {
-        alert("No tienes permisos de administrador");
+        alert("No tienes permisos de administrador. Usa !verificar para revisar tus permisos.");
         enviarLog("Intento de ban sin permisos - Target: " + targetDiscord);
         return;
     }
@@ -101,10 +170,10 @@ async function banearUsuario(targetDiscord, razon) {
 
         const logMsg = `Usuario BANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
         enviarLog(logMsg);
-        alert("Usuario " + targetDiscord + " ha sido baneado");
+        alert("✅ Usuario " + targetDiscord + " ha sido baneado");
     } catch (error) {
         console.error("Error al banear:", error);
-        alert("Error al ejecutar el comando");
+        alert("Error al ejecutar el comando: " + error.message);
     }
 }
 
@@ -118,7 +187,7 @@ async function desbanearUsuario(targetDiscord, razon) {
     // Verificar que el usuario actual sea admin
     const isAdmin = await esAdmin(localStorage.discord);
     if (!isAdmin) {
-        alert("No tienes permisos de administrador");
+        alert("No tienes permisos de administrador. Usa !verificar para revisar tus permisos.");
         enviarLog("Intento de unban sin permisos - Target: " + targetDiscord);
         return;
     }
@@ -148,10 +217,10 @@ async function desbanearUsuario(targetDiscord, razon) {
 
         const logMsg = `Usuario DESBANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
         enviarLog(logMsg);
-        alert("Usuario " + targetDiscord + " ha sido desbaneado");
+        alert("✅ Usuario " + targetDiscord + " ha sido desbaneado");
     } catch (error) {
         console.error("Error al desbanear:", error);
-        alert("Error al ejecutar el comando");
+        alert("Error al ejecutar el comando: " + error.message);
     }
 }
 
@@ -177,8 +246,11 @@ async function procesarComando(mensaje) {
         const razon = partes.slice(2).join(" ");
         await desbanearUsuario(targetUser, razon);
     }
+    else if (comando === "!verificar" || comando === "!check") {
+        await verificarMisPermisos();
+    }
     else {
-        alert("Comando no reconocido. Comandos disponibles: !ban, !unban");
+        alert("Comando no reconocido. Comandos disponibles: !ban, !unban, !verificar");
     }
 }
 
