@@ -1,222 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Armados Studios</title>
+  <meta charset="UTF-8" />
+  <title>Armados Studios</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase -->
+  <script type="module">
+    // ====== CONFIGURACIÓN REAL DE FIREBASE (REEMPLAZAR CON DATOS VERDADEROS) ======
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <style>
-        body {
-            margin: 0;
-            background: #0f0f0f;
-            color: #e0e0e0;
-            font-family: Arial, sans-serif;
-        }
+    window.firebaseConfig = {
+      apiKey: "TU_API_KEY_REAL",
+      authDomain: "tu-proyecto.firebaseapp.com",
+      projectId: "tu-proyecto",
+      storageBucket: "tu-proyecto.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
 
-        header {
-            text-align: center;
-            padding: 15px;
-        }
+    const app = initializeApp(window.firebaseConfig);
+    window.db = getFirestore(app);
+  </script>
 
-        .logo {
-            height: 60px;
-        }
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f1115;
+      color: #e5e5e5;
+    }
 
-        main {
-            padding-bottom: 70px;
-        }
+    .pestana {
+      display: none;
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #171a21;
+      border-radius: 14px;
+      padding: 30px;
+      box-sizing: border-box;
+    }
 
-        .pestana {
-            display: none;
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-        }
+    h1, h2, h3 {
+      text-align: center;
+      margin-top: 0;
+    }
 
-        h1 {
-            text-align: center;
-        }
+    .card {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #1f2330;
+      border-radius: 12px;
+      padding: 20px;
+    }
 
-        .card {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 14px;
-        }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+    }
 
-        input, button {
-            width: 100%;
-            margin: 8px 0;
-            padding: 10px;
-            background: #222;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
 
-        button {
-            cursor: pointer;
-        }
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 14px;
+    }
 
-        hr {
-            border: 1px solid #333;
-            margin: 15px 0;
-        }
+    button.secondary {
+      background: #2d3348;
+    }
 
-        .rojo {
-            color: red;
-        }
+    .separador {
+      height: 1px;
+      background: #2d3348;
+      margin: 20px 0;
+    }
 
-        img {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #0b0d12;
+      padding: 10px;
+      box-sizing: border-box;
+    }
 
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #111;
-            padding: 10px;
-        }
-
-        footer input {
-            max-width: 900px;
-            margin: auto;
-            display: block;
-        }
-    </style>
-
-    <script defer src="script.js"></script>
-    <script defer src="script2.js"></script>
+    #commandInput {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-    <img src="/logo1.png" class="logo">
-</header>
+  <!-- LOGIN -->
+  <div class="pestana" id="login">
+    <h1>Login</h1>
+    <div class="card">
+      <label>Ingrese su nombre de Discord:</label>
+      <input id="loginDiscord" />
 
-<main>
+      <label>Ingrese su contraseña de la web:</label>
+      <input id="loginPass" type="password" />
 
-    <!-- LOGIN -->
-    <div class="pestana" id="login">
-        <h1>Login</h1>
-        <div class="card">
-            <label>Ingrese su nombre de Discord:</label>
-            <input id="login-discord">
+      <button onclick="login()">Mandar la Solicitud</button>
 
-            <label>Ingrese su contraseña de la web:</label>
-            <input id="login-clave" type="password">
+      <div class="separador"></div>
 
-            <button onclick="login()">Mandar la Solicitud</button>
-
-            <hr>
-
-            <p>¿No tienes una cuenta en la web?</p>
-            <button onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
-        </div>
+      <p>¿No tienes una cuenta en la web?</p>
+      <button class="secondary" onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
     </div>
+  </div>
 
-    <!-- REGISTER -->
-    <div class="pestana" id="register">
-        <h1>Registrarme</h1>
-        <div class="card">
-            <label>Ingrese su nombre de Discord:</label>
-            <input id="reg-discord">
+  <!-- REGISTER -->
+  <div class="pestana" id="register">
+    <h1>Registrarme</h1>
+    <div class="card">
+      <label>Ingrese su nombre de Discord:</label>
+      <input id="regDiscord" />
 
-            <label>Ingrese su nombre de Roblox:</label>
-            <input id="reg-roblox">
+      <label>Ingrese su nombre de Roblox:</label>
+      <input id="regRoblox" />
 
-            <label>Ingrese su contraseña de la web:</label>
-            <input id="reg-clave" type="password">
+      <label>Ingrese su contraseña de la web:</label>
+      <input id="regPass" type="password" />
 
-            <button onclick="register()">Mandar la Solicitud</button>
+      <button onclick="register()">Mandar la Solicitud</button>
 
-            <hr>
+      <div class="separador"></div>
 
-            <p>¿Ya tienes una cuenta en la web?</p>
-            <button onclick="mostrarPestania('login')">Ir a login</button>
-        </div>
+      <p>¿Ya tienes una cuenta en la web?</p>
+      <button class="secondary" onclick="mostrarPestania('login')">Ir a Login</button>
     </div>
+  </div>
 
-    <!-- INICIO -->
-    <div class="pestana" id="inicio">
-        <h1>Bienvenido a Armados Studios</h1>
-        <h3>Te agradecemos en haber confiado en nosotros...</h3>
+  <!-- INICIO -->
+  <div class="pestana" id="inicio">
+    <h1>Bienvenido a Armados Studios</h1>
+    <h3>Te agradecemos en haber confiado en nosotros...</h3>
 
-        <div class="card">
-            <h2>¿Qué vas a poder encontrar aquí?</h2>
+    <div class="card">
+      <h2>¿Que vas a poder encontrar aqui?</h2>
 
-            <p>Modelos de Roblox/Blender liberados</p>
-            <button onclick="mostrarPestania('liberados')">Ver los modelos liberados</button>
+      <p>Modelos de Roblox / Blender liberados</p>
+      <button onclick="mostrarPestania('liberados')">Ver los modelos liberados</button>
 
-            <hr>
+      <div class="separador"></div>
 
-            <p>Modelos en venta de Roblox/Blender</p>
-            <button onclick="mostrarPestania('marcketplace')">Ver los modelos en venta</button>
+      <p>Modelos de Roblox / Blender en venta</p>
+      <button onclick="mostrarPestania('marketplace')">Ver los modelos en venta</button>
 
-            <hr>
+      <div class="separador"></div>
 
-            <p>Usuarios baneados por filtraciones o corrupción</p>
-            <button onclick="mostrarPestania('sancionados')">Ver sancionados</button>
-        </div>
+      <p>Usuarios baneados por filtraciones y corrupción</p>
+      <button onclick="mostrarPestania('sancionados')">Ver usuarios sancionados</button>
     </div>
+  </div>
 
-    <!-- SANCIONADOS -->
-    <div class="pestana" id="sancionados">
-        <h1>Sancionados</h1>
+  <!-- DESHABILITADO -->
+  <div class="pestana" id="desavilitado">
+    <h1>Acceso Deshabilitado</h1>
+    <p style="text-align:center">Tu cuenta o IP se encuentra sancionada.</p>
+  </div>
 
-        <div class="card">
-            <p><b>Usuario Discord:</b> tizi0990_77482</p>
-            <p><b>Usuario Roblox:</b> ???</p>
-            <p><b>Razón:</b> Colaborar con filtradores</p>
-            <p><b>Reportador:</b> @abelcraft_ok664</p>
+  <!-- LIBERADOS -->
+  <div class="pestana" id="liberados">
+    <h1>Modelos Liberados</h1>
+  </div>
 
-            <hr>
+  <!-- SANCIONADOS -->
+  <div class="pestana" id="sancionados">
+    <h1>Usuarios Sancionados</h1>
+  </div>
 
-            <img src="https://cdn.discordapp.com/attachments/1422937644039671951/1467559674097307750/image.png">
-            <img src="https://cdn.discordapp.com/attachments/1422937644039671951/1467559674449756271/image.png">
-        </div>
-    </div>
+  <!-- ADMINS -->
+  <div class="pestana" id="admins">
+    <h1>Panel de Administradores</h1>
+  </div>
 
-    <!-- DESAVILITADO -->
-    <div class="pestana" id="desavilitado">
-        <h1 class="rojo">Estas desavilitado!!!</h1>
-        <p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
-    </div>
+  <footer>
+    <input id="commandInput" placeholder="commands" />
+  </footer>
 
-    <!-- LIBERADOS -->
-    <div class="pestana" id="liberados">
-        <h1>Modelos Liberados de Roblox/Blender</h1>
+  <script>
+    function mostrarPestania(id) {
+      document.querySelectorAll('.pestana').forEach(p => p.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      enviarLog('Cambio de pestaña: ' + id);
+    }
 
-        <div class="card">
-            <p><b>Modelo:</b> Luz para Cartelera LED</p>
-            <p><b>Dueño:</b> @gael098idndn</p>
-            <p><b>Libera:</b> @gael098idndn</p>
-            <p>Sistema de iluminación ajustable</p>
-        </div>
-    </div>
+    function ObtenerLogs() {
+      return (
+        'https://discord.com/api/webhoo' +
+        'ks/1468120004473126932/OExqgqJ' +
+        'NhTcDxSa1XqbhTnqmMrFo7hKDJkZbL' +
+        'U3LIKk9mUEEKU0lXMvHOiK7pkUof' +
+        'G7B'
+      );
+    }
 
-    <!-- MARKET -->
-    <div class="pestana" id="marcketplace">
-        <h1>Modelos en venta de Roblox/Blender</h1>
+    function enviarLog(accion) {
+      const webhook = ObtenerLogs();
+      const data = {
+        content: `**Usuario (Discord):** ${localStorage.getItem('discord') || 'N/A'}\n**Usuario (Roblox):** ${localStorage.getItem('roblox') || 'N/A'}\n**IP:** N/A\n**Accion:** ${accion}`
+      };
+      fetch(webhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    }
 
-        <div class="card">
-            <p><b>Modelo:</b> Asiento Alcolchonado</p>
-            <p><b>Vendedor:</b> @abelcraft_ok664</p>
-            <p>Un asiento alcochonado xd</p>
-        </div>
-    </div>
+    function login() {
+      enviarLog('Intento de login');
+      // lógica Firebase pendiente
+    }
 
-</main>
+    function register() {
+      enviarLog('Intento de registro');
+      // lógica Firebase pendiente
+    }
 
-<footer>
-    <input id="commandInput" placeholder="commands">
-</footer>
+    document.getElementById('commandInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const cmd = e.target.value.trim();
+        e.target.value = '';
+        ejecutarComando(cmd);
+      }
+    });
 
+    function ejecutarComando(cmd) {
+      enviarLog('Comando ejecutado: ' + cmd);
+      if (cmd === '!rejoin') location.reload();
+      else alert('Comando inválido o sin permisos');
+    }
+
+    // Inicio
+    mostrarPestania('login');
+  </script>
 </body>
 </html>

@@ -98,28 +98,31 @@ async function login() {
     }
 
     const ip = await obtenerIP();
+    const ref = db.collection("usuarios").doc(discord);
+    const snap = await ref.get();
 
-    const snap = await db.collection("usuarios")
-        .where("discord", "==", discord)
-        .where("clave", "==", clave)
-        .get();
-
-    if (snap.empty) {
-        alert("Credenciales incorrectas");
-        enviarLog("Login fallido");
+    if (!snap.exists) {
+        alert("Usuario no encontrado");
+        enviarLog("Login fallido: usuario inexistente");
         return;
     }
 
-    const user = snap.docs[0].data();
+    const user = snap.data();
+
+    if (user.clave !== clave) {
+        alert("Clave incorrecta");
+        enviarLog("Login fallido: clave incorrecta");
+        return;
+    }
 
     const ipBan = await db.collection("IPbaneadas")
         .where("IP", "==", ip)
         .get();
 
-    if (ipBan.size > 0 || user.baneado === true) {
+    if (!ipBan.empty || user.baneado === true) {
         localStorage.setItem("baneado", "true");
         mostrarPestania("desavilitado");
-        enviarLog("Intento de login baneado");
+        enviarLog("Login bloqueado por ban");
         return;
     }
 
@@ -127,39 +130,51 @@ async function login() {
         discord: user.discord,
         roblox: user.roblox,
         clave: user.clave,
-        ip: ip
+        ip
     }));
 
     enviarLog("Login exitoso");
     mostrarPestania("inicio");
 }
 
+
 /* =========================
    REGISTER
 ========================= */
 
 async function register() {
-    if (localStorage.getItem("baneado")) {
-        mostrarPestania("desavilitado");
-        return;
-    }
-
     const discord = document.getElementById("reg-discord").value.trim();
     const roblox = document.getElementById("reg-roblox").value.trim();
     const clave = document.getElementById("reg-clave").value.trim();
+
+    if (!discord || !roblox || !clave) {
+        alert("Completa todos los campos");
+        return;
+    }
+
     const ip = await obtenerIP();
 
+    // IP baneada
     const ipBan = await db.collection("IPbaneadas")
         .where("IP", "==", ip)
         .get();
 
-    if (ipBan.size > 0) {
+    if (!ipBan.empty) {
+        localStorage.setItem("baneado", "true");
         mostrarPestania("desavilitado");
-        enviarLog("Registro bloqueado por IP");
+        enviarLog("Registro bloqueado por IP baneada");
         return;
     }
 
-    await db.collection("usuarios").add({
+    const ref = db.collection("usuarios").doc(discord);
+    const existe = await ref.get();
+
+    if (existe.exists) {
+        alert("Ese usuario ya existe");
+        return;
+    }
+
+    await ref.set({
         discord,
         roblox,
         clave,
@@ -179,6 +194,7 @@ async function register() {
     mostrarPestania("inicio");
 }
 
+
 /* =========================
    AUTOLOGIN
 ========================= */
@@ -188,21 +204,19 @@ async function autologin() {
     if (!data) return;
 
     const user = JSON.parse(data);
+    const ref = db.collection("usuarios").doc(user.discord);
+    const snap = await ref.get();
 
-    const snap = await db.collection("usuarios")
-        .where("discord", "==", user.discord)
-        .where("clave", "==", user.clave)
-        .get();
-
-    if (snap.empty || snap.docs[0].data().baneado) {
+    if (!snap.exists || snap.data().baneado) {
         localStorage.clear();
-        mostrarPestania("login");
+        enviarLog("Autologin fallido");
         return;
     }
 
     mostrarPestania("inicio");
     enviarLog("Autologin exitoso");
 }
+
 
 /* =========================
    BAN / UNBAN
