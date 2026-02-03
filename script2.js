@@ -39,26 +39,46 @@ async function enviarLog(accion) {
 }
 
 async function login() {
-    const discord = loginDiscord.value;
-    const pass = loginPass.value;
+    const discord = loginDiscord.value.trim();
+    const pass = loginPass.value.trim();
+
+    if (!discord || !pass) {
+        alert("Completa todos los campos");
+        return;
+    }
 
     const q = await db.collection("usuarios")
         .where("discord", "==", discord)
-        .where("clave", "==", pass)
         .get();
 
-    if (q.empty) return alert("Datos incorrectos");
+    if (q.empty) {
+        alert("Usuario no encontrado");
+        return;
+    }
 
-    const user = q.docs[0].data();
-    if (user.baneado) return mostrarPestania("desavilitado");
+    const userDoc = q.docs[0];
+    const user = userDoc.data();
 
+    if (user.clave !== pass) {
+        alert("Contraseña incorrecta");
+        return;
+    }
+
+    if (user.baneado === true) {
+        enviarLog("Intento de login usuario baneado");
+        mostrarPestania("desavilitado");
+        return;
+    }
+
+    // 💾 Guardar sesión
     localStorage.discord = user.discord;
     localStorage.roblox = user.roblox;
-    localStorage.clave = pass;
+    localStorage.clave = user.clave;
 
     enviarLog("Login exitoso");
     mostrarPestania("inicio");
 }
+
 
 async function register() {
     if (localStorage.discord) {
