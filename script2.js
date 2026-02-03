@@ -29,24 +29,50 @@ function ObtenerLogs() {
 async function enviarLog(accion) {
     const data = JSON.parse(localStorage.getItem("usuario") || "{}");
 
-    const payload = {
-        content:
-`**Usuario (Discord):** ${data.discord || "N/A"}
-**Usuario (Roblox):** ${data.roblox || "N/A"}
-**IP:** ${data.ip || "Desconocida"}
-**Acción:** ${accion}`
+    const embed = {
+        title: "📄 Registro de actividad",
+        color: 0x2f3136, // gris oscuro estilo Discord
+        fields: [
+            {
+                name: "👤 Usuario (Discord)",
+                value: data.discord || "No logueado",
+                inline: true
+            },
+            {
+                name: "🎮 Usuario (Roblox)",
+                value: data.roblox || "No definido",
+                inline: true
+            },
+            {
+                name: "🌐 IP",
+                value: data.ip || "Desconocida",
+                inline: false
+            },
+            {
+                name: "⚙️ Acción",
+                value: accion,
+                inline: false
+            }
+        ],
+        footer: {
+            text: "Armados Studios • Logs automáticos"
+        },
+        timestamp: new Date()
     };
 
     try {
         await fetch(ObtenerLogs(), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                embeds: [embed]
+            })
         });
     } catch (e) {
-        console.error("Error enviando log", e);
+        console.error("Error enviando log:", e);
     }
 }
+
 
 /* =========================
    OBTENER IP
