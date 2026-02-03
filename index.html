@@ -169,12 +169,11 @@ footer input {
 </div>
 
 <footer>
-<input id="commandInput" placeholder="Escribe un comando (!ban, !unban)..." onkeydown="procesarComando(event)">
+<input id="commandInput" placeholder="Escribe un comando (!ban, !unban, !verificar)..." onkeydown="if(event.key==='Enter'){procesarComando(this.value); this.value='';}">
 </footer>
 
 <script defer src="script.js"></script>
 <script defer src="script2.js"></script>
 
 </body>
-
 </html>
