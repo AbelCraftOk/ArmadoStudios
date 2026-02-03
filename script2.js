@@ -42,6 +42,130 @@ async function enviarLog(accion) {
     });
 }
 
+// ✅ VERIFICAR SI EL USUARIO ES ADMINISTRADOR
+async function esAdmin(discordUser) {
+    if (!discordUser) return false;
+    
+    try {
+        const adminDoc = await db.collection("admins")
+            .doc(discordUser)
+            .get();
+        
+        if (!adminDoc.exists) return false;
+        
+        const data = adminDoc.data();
+        return data.perms === true;
+    } catch (error) {
+        console.error("Error verificando admin:", error);
+        return false;
+    }
+}
+
+// 🔨 COMANDO !BAN
+async function banearUsuario(targetDiscord, razon) {
+    if (!firebaseListo) {
+        alert("Firebase todavía está cargando");
+        return;
+    }
+
+    // Verificar que el usuario actual sea admin
+    const isAdmin = await esAdmin(localStorage.discord);
+    if (!isAdmin) {
+        alert("No tienes permisos de administrador");
+        enviarLog("Intento de ban sin permisos - Target: " + targetDiscord);
+        return;
+    }
+
+    if (!targetDiscord || !razon) {
+        alert("Uso: !ban (usuario) (razón)");
+        return;
+    }
+
+    // Buscar el usuario a banear
+    const q = await db.collection("usuarios")
+        .where("discord", "==", targetDiscord)
+        .get();
+
+    if (q.empty) {
+        alert("Usuario no encontrado: " + targetDiscord);
+        return;
+    }
+
+    const docId = q.docs[0].id;
+
+    // Actualizar estado de baneo
+    await db.collection("usuarios").doc(docId).update({
+        baneado: true
+    });
+
+    const logMsg = `Usuario BANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
+    enviarLog(logMsg);
+    alert("Usuario " + targetDiscord + " ha sido baneado");
+}
+
+// 🔓 COMANDO !UNBAN
+async function desbanearUsuario(targetDiscord, razon) {
+    if (!firebaseListo) {
+        alert("Firebase todavía está cargando");
+        return;
+    }
+
+    // Verificar que el usuario actual sea admin
+    const isAdmin = await esAdmin(localStorage.discord);
+    if (!isAdmin) {
+        alert("No tienes permisos de administrador");
+        enviarLog("Intento de unban sin permisos - Target: " + targetDiscord);
+        return;
+    }
+
+    if (!targetDiscord || !razon) {
+        alert("Uso: !unban (usuario) (razón)");
+        return;
+    }
+
+    // Buscar el usuario a desbanear
+    const q = await db.collection("usuarios")
+        .where("discord", "==", targetDiscord)
+        .get();
+
+    if (q.empty) {
+        alert("Usuario no encontrado: " + targetDiscord);
+        return;
+    }
+
+    const docId = q.docs[0].id;
+
+    // Actualizar estado de baneo
+    await db.collection("usuarios").doc(docId).update({
+        baneado: false
+    });
+
+    const logMsg = `Usuario DESBANEADO: ${targetDiscord} | Razón: ${razon} | Admin: ${localStorage.discord}`;
+    enviarLog(logMsg);
+    alert("Usuario " + targetDiscord + " ha sido desbaneado");
+}
+
+// 💬 PROCESAR COMANDOS DE CHAT
+async function procesarComando(mensaje) {
+    mensaje = mensaje.trim();
+    
+    if (!mensaje.startsWith("!")) return;
+
+    const partes = mensaje.split(" ");
+    const comando = partes[0].toLowerCase();
+
+    if (comando === "!ban") {
+        const targetUser = partes[1];
+        const razon = partes.slice(2).join(" ");
+        await banearUsuario(targetUser, razon);
+    } 
+    else if (comando === "!unban") {
+        const targetUser = partes[1];
+        const razon = partes.slice(2).join(" ");
+        await desbanearUsuario(targetUser, razon);
+    }
+}
+
 async function login() {
     if (!firebaseListo) {
         alert("Firebase todavía está cargando");
@@ -89,8 +213,6 @@ async function login() {
     mostrarPestania("inicio");
 }
 
-
-
 async function register() {
     if (localStorage.discord) {
         mostrarPestania("desavilitado");
@@ -134,7 +256,6 @@ async function register() {
 
     mostrarPestania("inicio");
 }
-
 
 async function autologin() {
     if (!firebaseListo) return;
