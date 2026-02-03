@@ -61,18 +61,49 @@ async function login() {
 }
 
 async function register() {
-    if (localStorage.discord) return mostrarPestania("desavilitado");
+    if (localStorage.discord) {
+        mostrarPestania("desavilitado");
+        return;
+    }
 
+    const discord = regDiscord.value.trim();
+    const roblox = regRoblox.value.trim();
+    const pass = regPass.value.trim();
+
+    if (!discord || !roblox || !pass) {
+        alert("Completa todos los campos");
+        return;
+    }
+
+    // 🔎 Verificar si ya existe
+    const existe = await db.collection("usuarios")
+        .where("discord", "==", discord)
+        .get();
+
+    if (!existe.empty) {
+        alert("Ese usuario de Discord ya existe");
+        return;
+    }
+
+    // ✅ Crear usuario
     await db.collection("usuarios").add({
-        discord: regDiscord.value,
-        roblox: regRoblox.value,
-        clave: regPass.value,
-        baneado: false
+        discord: discord,
+        roblox: roblox,
+        clave: pass,
+        baneado: false,
+        creado: Date.now()
     });
 
-    enviarLog("Registro nuevo");
-    login();
+    // 💾 Guardar sesión
+    localStorage.discord = discord;
+    localStorage.roblox = roblox;
+    localStorage.clave = pass;
+
+    enviarLog("Registro exitoso");
+
+    mostrarPestania("inicio");
 }
+
 
 async function autologin() {
     if (!localStorage.discord) return;
