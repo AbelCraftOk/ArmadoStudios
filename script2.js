@@ -44,7 +44,7 @@ async function enviarLog(accion) {
 
 async function login() {
     if (!firebaseListo) {
-        alert("Firebase todavía está cargando. Probá de nuevo.");
+        alert("Firebase todavía está cargando");
         return;
     }
 
@@ -52,6 +52,7 @@ async function login() {
     const pass = loginPass.value.trim();
 
     if (!discord || !pass) {
+        enviarLog("Login fallido: campos vacíos");
         alert("Completa todos los campos");
         return;
     }
@@ -61,25 +62,25 @@ async function login() {
         .get();
 
     if (q.empty) {
+        enviarLog("Login fallido: usuario inexistente (" + discord + ")");
         alert("Usuario no encontrado");
         return;
     }
 
-    const userDoc = q.docs[0];
-    const user = userDoc.data();
+    const user = q.docs[0].data();
 
     if (user.clave !== pass) {
+        enviarLog("Login fallido: contraseña incorrecta (" + discord + ")");
         alert("Contraseña incorrecta");
         return;
     }
 
-    if (user.baneado === true) {
-        enviarLog("Intento de login usuario baneado");
+    if (user.baneado) {
+        enviarLog("Login bloqueado: usuario baneado (" + discord + ")");
         mostrarPestania("desavilitado");
         return;
     }
 
-    // 💾 Guardar sesión
     localStorage.discord = user.discord;
     localStorage.roblox = user.roblox;
     localStorage.clave = user.clave;
@@ -87,6 +88,7 @@ async function login() {
     enviarLog("Login exitoso");
     mostrarPestania("inicio");
 }
+
 
 
 async function register() {
@@ -138,21 +140,37 @@ async function autologin() {
     if (!firebaseListo) return;
     if (!localStorage.discord || !localStorage.clave) return;
 
+    mostrarOverlayLogin();
+    enviarLog("Intento de autologin");
+
     const q = await db.collection("usuarios")
         .where("discord", "==", localStorage.discord)
         .get();
 
     if (q.empty) {
+        enviarLog("Autologin fallido: cuenta inexistente");
         localStorage.clear();
+        ocultarOverlayLogin();
         return;
     }
 
     const user = q.docs[0].data();
+
     if (user.baneado) {
+        enviarLog("Autologin bloqueado: usuario baneado");
+        ocultarOverlayLogin();
         mostrarPestania("desavilitado");
         return;
     }
-
+    ocultarOverlayLogin();
+    enviarLog("Autologin exitoso");
     mostrarPestania("inicio");
 }
 
+window.addEventListener("load", () => {
+    enviarLog("Apertura de la web desde un dispositivo");
+});
+
+window.addEventListener("beforeunload", () => {
+    enviarLog("Cierre de pestaña / navegador / dispositivo");
+});

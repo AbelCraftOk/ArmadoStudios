@@ -78,6 +78,29 @@ footer input {
 
 <body onload="mostrarPestania('login'); autologin();">
 
+<div id="overlayLogin" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#1e2330;
+        padding:30px;
+        border-radius:14px;
+        font-size:18px;
+    ">
+        Intentando loguear...
+    </div>
+</div>
+
+
 <!-- LOGIN -->
 <div class="pestana" id="login">
 <h1>Login</h1>

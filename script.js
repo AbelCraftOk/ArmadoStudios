@@ -18,3 +18,11 @@ function ejecutarComando(cmd) {
     }
     alert("Comando inválido o sin permisos");
 }
+
+function mostrarOverlayLogin() {
+    document.getElementById("overlayLogin").style.display = "flex";
+}
+
+function ocultarOverlayLogin() {
+    document.getElementById("overlayLogin").style.display = "none";
+}
