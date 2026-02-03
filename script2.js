@@ -1,262 +1,88 @@
-/* =========================
-   CONFIG FIREBASE
-========================= */
-
+// 🔥 CONFIGURACIÓN FIREBASE
 const firebaseConfig = {
-    apiKey: "AIzaSyC0Jimi-JuSIF6R18xEB26gHmK2QhIHCKk",
-    authDomain: "armadosstudios.firebaseapp.com",
-    projectId: "armadosstudios",
-    storageBucket: "armadosstudios.firebasestorage.app",
-    messagingSenderId: "750018454804",
-    appId: "1:750018454804:web:abcdef123456"
+  apiKey: "AIzaSyC0Jimi-JuSIF6R18xEB26gHmK2QhIHCKk",
+  authDomain: "armadosstudios.firebaseapp.com",
+  projectId: "armadosstudios",
+  storageBucket: "armadosstudios.firebasestorage.app",
+  messagingSenderId: "750018454804",
+  appId: "1:750018454804:web:3cdb44ea4d63cfca050e01"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* =========================
-   WEBHOOK LOGS
-========================= */
-
 function ObtenerLogs() {
-    return "https://discord.com/api/webhooks"
-        + "/1468120004473126932/"
+    return "https://discord.com/api/webhooks/"
+        + "1468120004473126932/"
         + "OExqgqJNhTcDxSa1XqbhTnqmMrFo7hKDJkZbL"
-        + "U3LIKk9mUEEKU0lXMvHOiK7pkUof"
-        + "G7B";
+        + "U3LIKk9mUEEKU0lXMvHOiK7pkUofG7B";
 }
 
 async function enviarLog(accion) {
-    const data = JSON.parse(localStorage.getItem("usuario") || "{}");
-
-    const embed = {
-        title: "📄 Registro de actividad",
-        color: 0x2f3136, // gris oscuro estilo Discord
-        fields: [
-            {
-                name: "👤 Usuario (Discord)",
-                value: data.discord || "No logueado",
-                inline: true
-            },
-            {
-                name: "🎮 Usuario (Roblox)",
-                value: data.roblox || "No definido",
-                inline: true
-            },
-            {
-                name: "🌐 IP",
-                value: data.ip || "Desconocida",
-                inline: false
-            },
-            {
-                name: "⚙️ Acción",
-                value: accion,
-                inline: false
-            }
-        ],
-        footer: {
-            text: "Armados Studios • Logs automáticos"
-        },
-        timestamp: new Date()
+    const data = {
+        embeds: [{
+            title: "Nuevo Log",
+            fields: [
+                { name: "Usuario (Discord)", value: localStorage.discord || "N/A" },
+                { name: "Usuario (Roblox)", value: localStorage.roblox || "N/A" },
+                { name: "Acción", value: accion }
+            ],
+            color: 3447003
+        }]
     };
 
-    try {
-        await fetch(ObtenerLogs(), {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                embeds: [embed]
-            })
-        });
-    } catch (e) {
-        console.error("Error enviando log:", e);
-    }
+    fetch(ObtenerLogs(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
 }
-
-
-/* =========================
-   OBTENER IP
-========================= */
-
-async function obtenerIP() {
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    return data.ip;
-}
-
-/* =========================
-   LOGIN
-========================= */
 
 async function login() {
-    const discord = document.getElementById("login-discord").value.trim();
-    const clave = document.getElementById("login-clave").value.trim();
+    const discord = loginDiscord.value;
+    const pass = loginPass.value;
 
-    if (!discord || !clave) {
-        alert("Completa todos los campos");
-        return;
-    }
-
-    const ip = await obtenerIP();
-    const ref = db.collection("usuarios").doc(discord);
-    const snap = await ref.get();
-
-    if (!snap.exists) {
-        alert("Usuario no encontrado");
-        enviarLog("Login fallido: usuario inexistente");
-        return;
-    }
-
-    const user = snap.data();
-
-    if (user.clave !== clave) {
-        alert("Clave incorrecta");
-        enviarLog("Login fallido: clave incorrecta");
-        return;
-    }
-
-    const ipBan = await db.collection("IPbaneadas")
-        .where("IP", "==", ip)
+    const q = await db.collection("usuarios")
+        .where("discord", "==", discord)
+        .where("clave", "==", pass)
         .get();
 
-    if (!ipBan.empty || user.baneado === true) {
-        localStorage.setItem("baneado", "true");
-        mostrarPestania("desavilitado");
-        enviarLog("Login bloqueado por ban");
-        return;
-    }
+    if (q.empty) return alert("Datos incorrectos");
 
-    localStorage.setItem("usuario", JSON.stringify({
-        discord: user.discord,
-        roblox: user.roblox,
-        clave: user.clave,
-        ip
-    }));
+    const user = q.docs[0].data();
+    if (user.baneado) return mostrarPestania("desavilitado");
+
+    localStorage.discord = user.discord;
+    localStorage.roblox = user.roblox;
+    localStorage.clave = pass;
 
     enviarLog("Login exitoso");
     mostrarPestania("inicio");
 }
 
-
-/* =========================
-   REGISTER
-========================= */
-
 async function register() {
-    const discord = document.getElementById("reg-discord").value.trim();
-    const roblox = document.getElementById("reg-roblox").value.trim();
-    const clave = document.getElementById("reg-clave").value.trim();
+    if (localStorage.discord) return mostrarPestania("desavilitado");
 
-    if (!discord || !roblox || !clave) {
-        alert("Completa todos los campos");
-        return;
-    }
-
-    const ip = await obtenerIP();
-
-    // IP baneada
-    const ipBan = await db.collection("IPbaneadas")
-        .where("IP", "==", ip)
-        .get();
-
-    if (!ipBan.empty) {
-        localStorage.setItem("baneado", "true");
-        mostrarPestania("desavilitado");
-        enviarLog("Registro bloqueado por IP baneada");
-        return;
-    }
-
-    const ref = db.collection("usuarios").doc(discord);
-    const existe = await ref.get();
-
-    if (existe.exists) {
-        alert("Ese usuario ya existe");
-        return;
-    }
-
-    await ref.set({
-        discord,
-        roblox,
-        clave,
-        baneado: false,
-        ip,
-        fecha: new Date()
+    await db.collection("usuarios").add({
+        discord: regDiscord.value,
+        roblox: regRoblox.value,
+        clave: regPass.value,
+        baneado: false
     });
 
-    localStorage.setItem("usuario", JSON.stringify({
-        discord,
-        roblox,
-        clave,
-        ip
-    }));
-
-    enviarLog("Registro exitoso");
-    mostrarPestania("inicio");
+    enviarLog("Registro nuevo");
+    login();
 }
-
-
-/* =========================
-   AUTOLOGIN
-========================= */
 
 async function autologin() {
-    const data = localStorage.getItem("usuario");
-    if (!data) return;
+    if (!localStorage.discord) return;
 
-    const user = JSON.parse(data);
-    const ref = db.collection("usuarios").doc(user.discord);
-    const snap = await ref.get();
+    const q = await db.collection("usuarios")
+        .where("discord", "==", localStorage.discord)
+        .where("clave", "==", localStorage.clave)
+        .get();
 
-    if (!snap.exists || snap.data().baneado) {
-        localStorage.clear();
-        enviarLog("Autologin fallido");
-        return;
-    }
+    if (q.empty) return localStorage.clear();
 
     mostrarPestania("inicio");
-    enviarLog("Autologin exitoso");
-}
-
-
-/* =========================
-   BAN / UNBAN
-========================= */
-
-async function banUsuario(discord, razon) {
-    if (!discord || !razon) {
-        alert("Uso: !ban usuario razon");
-        return;
-    }
-
-    const snap = await db.collection("usuarios")
-        .where("discord", "==", discord)
-        .get();
-
-    if (snap.empty) {
-        alert("Usuario no encontrado");
-        return;
-    }
-
-    snap.forEach(doc => {
-        doc.ref.update({ baneado: true });
-    });
-
-    enviarLog(`Usuario baneado: ${discord} | Razón: ${razon}`);
-}
-
-async function unbanUsuario(discord, razon) {
-    if (!discord || !razon) {
-        alert("Uso: !unban usuario razon");
-        return;
-    }
-
-    const snap = await db.collection("usuarios")
-        .where("discord", "==", discord)
-        .get();
-
-    snap.forEach(doc => {
-        doc.ref.update({ baneado: false });
-    });
-
-    enviarLog(`Usuario desbaneado: ${discord} | Razón: ${razon}`);
 }

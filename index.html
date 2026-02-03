@@ -1,260 +1,156 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Armados Studios</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Armados Studios</title>
 
-  <!-- Firebase -->
-  <script type="module">
-    // ====== CONFIGURACIÓN REAL DE FIREBASE (REEMPLAZAR CON DATOS VERDADEROS) ======
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-    window.firebaseConfig = {
-      apiKey: "TU_API_KEY_REAL",
-      authDomain: "tu-proyecto.firebaseapp.com",
-      projectId: "tu-proyecto",
-      storageBucket: "tu-proyecto.appspot.com",
-      messagingSenderId: "1234567890",
-      appId: "1:1234567890:web:abcdef123456"
-    };
+<script defer src="script.js"></script>
+<script defer src="script2.js"></script>
 
-    const app = initializeApp(window.firebaseConfig);
-    window.db = getFirestore(app);
-  </script>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f1115;
+    color: #eaeaea;
+}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f1115;
-      color: #e5e5e5;
-    }
+.pestana {
+    display: none;
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 16px;
+    background: #161a22;
+    margin-top: 40px;
+}
 
-    .pestana {
-      display: none;
-      max-width: 1100px;
-      margin: 40px auto;
-      background: #171a21;
-      border-radius: 14px;
-      padding: 30px;
-      box-sizing: border-box;
-    }
+h1 { text-align: center; }
+h2, h3 { margin-top: 0; }
 
-    h1, h2, h3 {
-      text-align: center;
-      margin-top: 0;
-    }
+.recuadro {
+    background: #1e2330;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
 
-    .card {
-      max-width: 500px;
-      margin: 0 auto;
-      background: #1f2330;
-      border-radius: 12px;
-      padding: 20px;
-    }
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: none;
+}
 
-    label {
-      display: block;
-      margin-top: 15px;
-      font-size: 14px;
-    }
+button {
+    background: #2f6fed;
+    color: white;
+    cursor: pointer;
+}
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
+button:hover { opacity: 0.9; }
 
-    button {
-      margin-top: 15px;
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      background: #3b82f6;
-      color: #fff;
-      font-size: 14px;
-    }
+hr {
+    border: none;
+    height: 1px;
+    background: #333;
+    margin: 20px 0;
+}
 
-    button.secondary {
-      background: #2d3348;
-    }
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #0b0d12;
+    padding: 8px;
+}
 
-    .separador {
-      height: 1px;
-      background: #2d3348;
-      margin: 20px 0;
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #0b0d12;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-
-    #commandInput {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-  </style>
+footer input {
+    background: #161a22;
+    color: white;
+}
+</style>
 </head>
-<body>
 
-  <!-- LOGIN -->
-  <div class="pestana" id="login">
-    <h1>Login</h1>
-    <div class="card">
-      <label>Ingrese su nombre de Discord:</label>
-      <input id="loginDiscord" />
+<body onload="mostrarPestania('login'); autologin();">
 
-      <label>Ingrese su contraseña de la web:</label>
-      <input id="loginPass" type="password" />
+<!-- LOGIN -->
+<div class="pestana" id="login">
+<h1>Login</h1>
+<div class="recuadro">
+<label>Ingrese su nombre de Discord:</label>
+<input id="loginDiscord">
 
-      <button onclick="login()">Mandar la Solicitud</button>
+<label>Ingrese su contraseña de la web:</label>
+<input id="loginPass" type="password">
 
-      <div class="separador"></div>
+<button onclick="login()">Mandar la Solicitud</button>
 
-      <p>¿No tienes una cuenta en la web?</p>
-      <button class="secondary" onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
-    </div>
-  </div>
+<hr>
 
-  <!-- REGISTER -->
-  <div class="pestana" id="register">
-    <h1>Registrarme</h1>
-    <div class="card">
-      <label>Ingrese su nombre de Discord:</label>
-      <input id="regDiscord" />
+<p>¿No tienes una cuenta en la web?</p>
+<button onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
+</div>
+</div>
 
-      <label>Ingrese su nombre de Roblox:</label>
-      <input id="regRoblox" />
+<!-- REGISTER -->
+<div class="pestana" id="register">
+<h1>Registrarme</h1>
+<div class="recuadro">
+<label>Discord:</label>
+<input id="regDiscord">
 
-      <label>Ingrese su contraseña de la web:</label>
-      <input id="regPass" type="password" />
+<label>Roblox:</label>
+<input id="regRoblox">
 
-      <button onclick="register()">Mandar la Solicitud</button>
+<label>Contraseña:</label>
+<input id="regPass" type="password">
 
-      <div class="separador"></div>
+<button onclick="register()">Mandar la Solicitud</button>
 
-      <p>¿Ya tienes una cuenta en la web?</p>
-      <button class="secondary" onclick="mostrarPestania('login')">Ir a Login</button>
-    </div>
-  </div>
+<hr>
 
-  <!-- INICIO -->
-  <div class="pestana" id="inicio">
-    <h1>Bienvenido a Armados Studios</h1>
-    <h3>Te agradecemos en haber confiado en nosotros...</h3>
+<p>¿Ya tienes una cuenta?</p>
+<button onclick="mostrarPestania('login')">Ir a login</button>
+</div>
+</div>
 
-    <div class="card">
-      <h2>¿Que vas a poder encontrar aqui?</h2>
+<!-- INICIO -->
+<div class="pestana" id="inicio">
+<h1>Bienvenido a Armados Studios</h1>
+<h3>Te agradecemos en haber confiado en nosotros...</h3>
 
-      <p>Modelos de Roblox / Blender liberados</p>
-      <button onclick="mostrarPestania('liberados')">Ver los modelos liberados</button>
+<div class="recuadro">
+<h2>¿Qué vas a poder encontrar aquí?</h2>
 
-      <div class="separador"></div>
+<p>Modelos liberados de Roblox/Blender</p>
+<button onclick="mostrarPestania('liberados')">Ver modelos liberados</button>
 
-      <p>Modelos de Roblox / Blender en venta</p>
-      <button onclick="mostrarPestania('marketplace')">Ver los modelos en venta</button>
+<hr>
 
-      <div class="separador"></div>
+<p>Modelos en venta</p>
+<button onclick="mostrarPestania('marcketplace')">Ver marketplace</button>
 
-      <p>Usuarios baneados por filtraciones y corrupción</p>
-      <button onclick="mostrarPestania('sancionados')">Ver usuarios sancionados</button>
-    </div>
-  </div>
+<hr>
 
-  <!-- DESHABILITADO -->
-  <div class="pestana" id="desavilitado">
-    <h1>Acceso Deshabilitado</h1>
-    <p style="text-align:center">Tu cuenta o IP se encuentra sancionada.</p>
-  </div>
+<p>Usuarios sancionados</p>
+<button onclick="mostrarPestania('sancionados')">Ver sancionados</button>
+</div>
+</div>
 
-  <!-- LIBERADOS -->
-  <div class="pestana" id="liberados">
-    <h1>Modelos Liberados</h1>
-  </div>
+<!-- DESHABILITADO -->
+<div class="pestana" id="desavilitado">
+<h1 style="color:red">Estas desavilitado!!!</h1>
+<p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
+</div>
 
-  <!-- SANCIONADOS -->
-  <div class="pestana" id="sancionados">
-    <h1>Usuarios Sancionados</h1>
-  </div>
+<footer>
+<input id="commandInput" placeholder="commands..." onkeydown="detectarComando(event)">
+</footer>
 
-  <!-- ADMINS -->
-  <div class="pestana" id="admins">
-    <h1>Panel de Administradores</h1>
-  </div>
-
-  <footer>
-    <input id="commandInput" placeholder="commands" />
-  </footer>
-
-  <script>
-    function mostrarPestania(id) {
-      document.querySelectorAll('.pestana').forEach(p => p.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-      enviarLog('Cambio de pestaña: ' + id);
-    }
-
-    function ObtenerLogs() {
-      return (
-        'https://discord.com/api/webhoo' +
-        'ks/1468120004473126932/OExqgqJ' +
-        'NhTcDxSa1XqbhTnqmMrFo7hKDJkZbL' +
-        'U3LIKk9mUEEKU0lXMvHOiK7pkUof' +
-        'G7B'
-      );
-    }
-
-    function enviarLog(accion) {
-      const webhook = ObtenerLogs();
-      const data = {
-        content: `**Usuario (Discord):** ${localStorage.getItem('discord') || 'N/A'}\n**Usuario (Roblox):** ${localStorage.getItem('roblox') || 'N/A'}\n**IP:** N/A\n**Accion:** ${accion}`
-      };
-      fetch(webhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    }
-
-    function login() {
-      enviarLog('Intento de login');
-      // lógica Firebase pendiente
-    }
-
-    function register() {
-      enviarLog('Intento de registro');
-      // lógica Firebase pendiente
-    }
-
-    document.getElementById('commandInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        const cmd = e.target.value.trim();
-        e.target.value = '';
-        ejecutarComando(cmd);
-      }
-    });
-
-    function ejecutarComando(cmd) {
-      enviarLog('Comando ejecutado: ' + cmd);
-      if (cmd === '!rejoin') location.reload();
-      else alert('Comando inválido o sin permisos');
-    }
-
-    // Inicio
-    mostrarPestania('login');
-  </script>
 </body>
 </html>
