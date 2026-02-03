@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Armados Studios</title>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .logo {
+            height: 60px;
+        }
+
+        main {
+            padding-bottom: 70px;
+        }
+
+        .pestana {
+            display: none;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        input, button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            background: #222;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        hr {
+            border: 1px solid #333;
+            margin: 15px 0;
+        }
+
+        .rojo {
+            color: red;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #111;
+            padding: 10px;
+        }
+
+        footer input {
+            max-width: 900px;
+            margin: auto;
+            display: block;
+        }
+    </style>
+
+    <script defer src="script.js"></script>
+    <script defer src="script2.js"></script>
+</head>
+<body>
+
+<header>
+    <img src="/logo1.png" class="logo">
+</header>
+
+<main>
+
+    <!-- LOGIN -->
+    <div class="pestana" id="login">
+        <h1>Login</h1>
+        <div class="card">
+            <label>Ingrese su nombre de Discord:</label>
+            <input id="login-discord">
+
+            <label>Ingrese su contraseña de la web:</label>
+            <input id="login-clave" type="password">
+
+            <button onclick="login()">Mandar la Solicitud</button>
+
+            <hr>
+
+            <p>¿No tienes una cuenta en la web?</p>
+            <button onclick="mostrarPestania('register')">Ir a crear una cuenta</button>
+        </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="pestana" id="register">
+        <h1>Registrarme</h1>
+        <div class="card">
+            <label>Ingrese su nombre de Discord:</label>
+            <input id="reg-discord">
+
+            <label>Ingrese su nombre de Roblox:</label>
+            <input id="reg-roblox">
+
+            <label>Ingrese su contraseña de la web:</label>
+            <input id="reg-clave" type="password">
+
+            <button onclick="register()">Mandar la Solicitud</button>
+
+            <hr>
+
+            <p>¿Ya tienes una cuenta en la web?</p>
+            <button onclick="mostrarPestania('login')">Ir a login</button>
+        </div>
+    </div>
+
+    <!-- INICIO -->
+    <div class="pestana" id="inicio">
+        <h1>Bienvenido a Armados Studios</h1>
+        <h3>Te agradecemos en haber confiado en nosotros...</h3>
+
+        <div class="card">
+            <h2>¿Qué vas a poder encontrar aquí?</h2>
+
+            <p>Modelos de Roblox/Blender liberados</p>
+            <button onclick="mostrarPestania('liberados')">Ver los modelos liberados</button>
+
+            <hr>
+
+            <p>Modelos en venta de Roblox/Blender</p>
+            <button onclick="mostrarPestania('marcketplace')">Ver los modelos en venta</button>
+
+            <hr>
+
+            <p>Usuarios baneados por filtraciones o corrupción</p>
+            <button onclick="mostrarPestania('sancionados')">Ver sancionados</button>
+        </div>
+    </div>
+
+    <!-- SANCIONADOS -->
+    <div class="pestana" id="sancionados">
+        <h1>Sancionados</h1>
+
+        <div class="card">
+            <p><b>Usuario Discord:</b> tizi0990_77482</p>
+            <p><b>Usuario Roblox:</b> ???</p>
+            <p><b>Razón:</b> Colaborar con filtradores</p>
+            <p><b>Reportador:</b> @abelcraft_ok664</p>
+
+            <hr>
+
+            <img src="https://cdn.discordapp.com/attachments/1422937644039671951/1467559674097307750/image.png">
+            <img src="https://cdn.discordapp.com/attachments/1422937644039671951/1467559674449756271/image.png">
+        </div>
+    </div>
+
+    <!-- DESAVILITADO -->
+    <div class="pestana" id="desavilitado">
+        <h1 class="rojo">Estas desavilitado!!!</h1>
+        <p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
+    </div>
+
+    <!-- LIBERADOS -->
+    <div class="pestana" id="liberados">
+        <h1>Modelos Liberados de Roblox/Blender</h1>
+
+        <div class="card">
+            <p><b>Modelo:</b> Luz para Cartelera LED</p>
+            <p><b>Dueño:</b> @gael098idndn</p>
+            <p><b>Libera:</b> @gael098idndn</p>
+            <p>Sistema de iluminación ajustable</p>
+        </div>
+    </div>
+
+    <!-- MARKET -->
+    <div class="pestana" id="marcketplace">
+        <h1>Modelos en venta de Roblox/Blender</h1>
+
+        <div class="card">
+            <p><b>Modelo:</b> Asiento Alcolchonado</p>
+            <p><b>Vendedor:</b> @abelcraft_ok664</p>
+            <p>Un asiento alcochonado xd</p>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <input id="commandInput" placeholder="commands">
+</footer>
+
+</body>
+</html>
