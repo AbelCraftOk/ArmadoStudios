@@ -8,8 +8,12 @@ const firebaseConfig = {
   appId: "1:750018454804:web:3cdb44ea4d63cfca050e01"
 };
 
+let firebaseListo = false;
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+firebaseListo = true;
 
 function ObtenerLogs() {
     return "https://discord.com/api/webhooks/"
@@ -39,6 +43,11 @@ async function enviarLog(accion) {
 }
 
 async function login() {
+    if (!firebaseListo) {
+        alert("Firebase todavía está cargando. Probá de nuevo.");
+        return;
+    }
+
     const discord = loginDiscord.value.trim();
     const pass = loginPass.value.trim();
 
@@ -126,14 +135,24 @@ async function register() {
 
 
 async function autologin() {
-    if (!localStorage.discord) return;
+    if (!firebaseListo) return;
+    if (!localStorage.discord || !localStorage.clave) return;
 
     const q = await db.collection("usuarios")
         .where("discord", "==", localStorage.discord)
-        .where("clave", "==", localStorage.clave)
         .get();
 
-    if (q.empty) return localStorage.clear();
+    if (q.empty) {
+        localStorage.clear();
+        return;
+    }
+
+    const user = q.docs[0].data();
+    if (user.baneado) {
+        mostrarPestania("desavilitado");
+        return;
+    }
 
     mostrarPestania("inicio");
 }
+
