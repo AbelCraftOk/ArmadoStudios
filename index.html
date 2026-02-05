@@ -5,13 +5,28 @@
 <title>Armados Studios</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" href="logo1.png">
 <style>
     body {
         margin: 0;
         font-family: Arial, sans-serif;
         background: #0f1115;
         color: #eaeaea;
+        overflow-y: auto;
+    }
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0f1115;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #2f6fed;
+        border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1e4fc4;
     }
     .pestana {
         display: none;
@@ -50,11 +65,10 @@
         margin: 20px 0;
     }
     footer {
-        position: fixed;
-        bottom: 0;
         width: 100%;
         background: #0b0d12;
         padding: 8px;
+        margin-top: 40px;
     }
     footer input {
         background: #161a22;
@@ -152,8 +166,8 @@
         </div>
     </div>  
     <div class="pestana" id="inicio">
-        <h1>Bienvenido a Armados Studios</h1>
-        <h3>Te agradecemos en haber confiado en nosotros...</h3>
+        <h1>Bienvenidos a Armados Studios</h1>
+        <h3>Te agradecemos por haber confiado en nosotros...</h3>
         <div class="recuadro">
             <h2>¿Qué vas a poder encontrar aquí?</h2>
             <p>Modelos liberados de Roblox/Blender</p>
@@ -167,39 +181,39 @@
         </div>
     </div>
     <div class="pestana" id="deshabilitado">
-        <h1 style="color:red">Estas deshabilitado!!!</h1>
-        <p>Deja de romper las bolas en esta web y no te crees más cuentas.</p>
+        <h1 style="color:red">¡Estás deshabilitado!</h1>
+        <p>No puedes acceder a esta web. Por favor, no intentes crear más cuentas.</p>
     </div>
     <div class="pestana" id="liberados">
-        <h1>Bienvenido a los Modelos Liberados por Armados Studios y su comunidad</h1>
+        <h1>Bienvenidos a los Modelos Liberados por Armados Studios y su comunidad</h1>
         <div class="recuadro">
             <div class="recuadro">
                 <h2>Metalpar Iguazu II OH1621 Nivelado</h2>
                 <p>Dueño: Vortex y Mashina</p>
-                <p>Un modelo que libero Elite Studios, fue adaptado a piso Nivelado y fue liberado para la comunidad de Armados Studios.</p>
+                <p>Un modelo que liberó Elite Studios, fue adaptado a piso nivelado y fue liberado para la comunidad de Armados Studios.</p>
                 <button onclick="window.open('https://abelcraftok.github.io/ArmadoStudios/free-models/Iguazu%201621%20Nivelado/Modelo.rbxm')">Descargar</button>
             </div>
         </div>
         <button onclick="mostrarPestania('inicio')">Volver al inicio</button>
     </div>
     <div class="pestana" id="marcketplace">
-        <h1>Bienvenido a los Modelos en venta de Armados Studios y su comunidad</h1>
+        <h1>Bienvenidos a los Modelos en Venta de Armados Studios y su comunidad</h1>
         <div class="recuadro">
             <div class="recuadro">
                 <h2>Metalpar Iguazu II 1721</h2>
                 <p>Dueño: Vortex y Mashina</p>
-                <p>Como ven en la imagen y arriba con el modelo de mashina lo que pude hacer fue un nivelado. Recuerden que para comprarlo deben tener el modelo de Mashina comprado.</p>
+                <p>Como pueden ver en la imagen, este modelo fue nivelado. Recuerden que para comprarlo deben tener el modelo de Mashina comprado previamente.</p>
                 <p>Precio: <p style="color:lime;">$1000 MP</p><p style="color:black;">30R$</p></p>
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/iguazu%20II%201721/ft1.webp" style="width:200px;">
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/iguazu%20II%201721/ft2.webp" style="width:200px;">
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/iguazu%20II%201721/ft3.webp" style="width:200px;">
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/iguazu%20II%201721/ft4.webp" style="width:200px;">
-                <button onclick="window.open('https://discord.com/channels/1444062713180586148/1465172268303777902')">Ver Publicacion</button>
+                <button onclick="window.open('https://discord.com/channels/1444062713180586148/1465172268303777902')">Ver Publicación</button>
             </div>
             <div class="recuadro">
                 <h2>2 internos de la Linea 406</h2>
                 <p>Dueño: Vortex</p>
-                <p>Como se ve en las fotos, estos son dos internos de la Linea 406 que tienen la skin original y real. Los modelos son: Iguazu II 1618 y Ugarte Americano IV</p>
+                <p>Como se ve en las fotos, estos son dos internos de la Línea 406 que tienen la skin original y real. Los modelos son: Iguazú II 1618 y Ugarte Americano IV</p>
                 <p>Precio por un solo interno: <p style="color:lime;">$500 MP</p><p style="color:black;">15R$</p></p>
                 <p>Precio por los dos internos: <p style="color:lime;">$1000 MP</p><p style="color:black;">30R$</p></p>
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/L406/ft1.webp" style="width:200px;">
@@ -209,17 +223,17 @@
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/L406/ft5.webp" style="width:200px;">
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/L406/ft6.webp" style="width:200px;">
                 <img src="https://abelcraftok.github.io/ArmadoStudios/marcketplace/L406/ft7.webp" style="width:200px;">
-                <button onclick="window.open('https://discord.com/channels/1444062713180586148/1463346185606660328')">Ver Publicacion</button>
+                <button onclick="window.open('https://discord.com/channels/1444062713180586148/1463346185606660328')">Ver Publicación</button>
             </div>
         </div>
         <button onclick="mostrarPestania('inicio')">Volver al inicio</button>
     </div>
     <div class="pestana" id="sancionados">
-        <h1>Bienvenido a los sancionados en Armados Studios</h1>
+        <h1>Bienvenidos a los Sancionados en Armados Studios</h1>
         <div class="recuadro">
             <div class="recuadro">
                 <h2>tizi0990_77482</h2>
-                <p>Razon: Colaborar con Filtras (Un Bimet) + Mandar invitaciones de servidores de Estafa/Dudosa procedencia.</p>
+                <p>Razón: Colaborar con Filtras (Un Bimet) + Mandar invitaciones de servidores de Estafa/Dudosa procedencia.</p>
                 <img src="sanciones/tizi/ft1.webp" style="width:200px;">
                 <img src="sanciones/tizi/ft2.webp" style="width:200px;">
                 <img src="sanciones/tizi/ft3.webp" style="width:200px;">
@@ -231,7 +245,7 @@
         <div class="recuadro">
             <div class="recuadro">
                 <h2>erloz_fandefcdayl</h2>
-                <p>Razon: Ser Benito Camelo, el cuál ese usuario es filtrador.</p>
+                <p>Razón: Ser Benito Camelo, el cual es un usuario filtrador.</p>
                 <img src="sanciones/erloz_fandefcdayl/ft1.webp" style="width:200px;">
                 <img src="sanciones/erloz_fandefcdayl/ft2.webp" style="width:200px;">
                 <img src="sanciones/erloz_fandefcdayl/ft3.webp" style="width:200px;">
@@ -242,8 +256,8 @@
     <footer>
         <input id="commandInput" placeholder="Escribe un comando (!ban, !unban, !verificar, !requestIP, !banIP, !unbanIP)..." onkeydown="if(event.key==='Enter'){procesarComando(this.value); this.value='';}">
         <hr>
-        <h2>¿Queres publicar tus modelos liberados o vender alguno tuyo?</h2>
-        <p>Para hacer eso, haz click en el siguiente boton:</p>
+        <h2>¿Quieres publicar tus modelos liberados o vender alguno tuyo?</h2>
+        <p>Para hacer eso, haz clic en el siguiente botón:</p>
         <button onclick="window.location.href='https://discord.com/channels/1444062713180586148/1468363331822948639'">Ir al sistema de Tickets de Armados Studios</button>
     </footer>
     <script defer src="script.js"></script>
